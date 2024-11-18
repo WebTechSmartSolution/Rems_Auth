@@ -95,7 +95,7 @@ namespace Rems_Auth.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while processing your request", Details = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred: ", Details = ex.Message });
             }
         }
 
@@ -109,7 +109,7 @@ namespace Rems_Auth.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while resetting the password", Details = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred: ", Details = ex.Message });
             }
         }
     }
