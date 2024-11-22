@@ -31,13 +31,9 @@
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
+        public List<IFormFile> Images { get; set; }
 
-        // Images and Documents (NotMapped in Model)
-        public ICollection<string> Images { get; set; } = new List<string>();
-        public string Document { get; set; }
-
-        // User ID (Will be populated from the authenticated user in the controller)
-        public int UserId { get; set; }
+       
     }
 
 }

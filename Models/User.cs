@@ -5,7 +5,7 @@ namespace Rems_Auth.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public required string Name { get; set; }

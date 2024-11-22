@@ -4,11 +4,11 @@ namespace Rems_Auth.Services
 {
     public interface IListingService
     {
-        Task<ListingResponse> AddListingAsync(ListingRequest request);
-        Task<IEnumerable<ListingResponse>> GetAllListingsAsync();
-        Task<IEnumerable<ListingResponse>> GetListingsByUserAsync(int userId);
-
-        Task<ListingResponse?> GetListingByIdAsync(int id);
-        Task<bool> DeleteListingAsync(int id);
+        Task<ListingResponse> CreateListingAsync(ListingRequest request, Guid userId);
+        Task<List<ListingResponse>> GetAllListingsAsync();
+        Task<ListingResponse> GetListingByIdAsync(Guid id);
+        Task<List<ListingResponse>> GetListingsByUserIdAsync(Guid userId);
+        Task<ListingResponse> UpdateListingAsync(Guid id, UpdateListingRequest request);
+        Task<bool> DeleteListingAsync(Guid id);
     }
 }

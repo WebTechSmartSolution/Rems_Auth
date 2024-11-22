@@ -1,10 +1,7 @@
 ﻿namespace Rems_Auth.Dtos
 {
-    public class ListingResponse
+    public class UpdateListingRequest
     {
-        public Guid Id { get; set; }
-
-        // Property Info
         public string PropertyName { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
@@ -33,14 +30,5 @@
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-
-        // Images and Documents
-        public List<ImageResponse> Images { get; set; }
-
-
-        // Metadata
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
-
 }

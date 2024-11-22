@@ -12,8 +12,8 @@ using Rems_Auth.Data;
 namespace Rems_Auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241118155339_AddListingMigration")]
-    partial class AddListingMigration
+    [Migration("20241122155850_updatesomefields")]
+    partial class updatesomefields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,23 +25,35 @@ namespace Rems_Auth.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Bathrooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Bedrooms")
-                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -55,9 +67,6 @@ namespace Rems_Auth.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GarageSize")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GarageSizeDescription")
                         .HasColumnType("int");
 
                     b.Property<int>("NoOfBathrooms")
@@ -93,10 +102,6 @@ namespace Rems_Auth.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TotalArea")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -104,11 +109,11 @@ namespace Rems_Auth.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("YearBuilt")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("YearConstructed")
                         .HasColumnType("int");
@@ -121,16 +126,16 @@ namespace Rems_Auth.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserId1");
+
                     b.ToTable("Listings");
                 });
 
             modelBuilder.Entity("Rems_Auth.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
@@ -178,15 +183,35 @@ namespace Rems_Auth.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
+            modelBuilder.Entity("Image", b =>
                 {
-                    b.HasOne("Rems_Auth.Models.User", "User")
-                        .WithMany("Listings")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Rems_Auth.Models.AddListing", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Listing");
+                });
+
+            modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
+                {
+                    b.HasOne("Rems_Auth.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Rems_Auth.Models.User", null)
+                        .WithMany("Listings")
+                        .HasForeignKey("UserId1");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Rems_Auth.Models.User", b =>

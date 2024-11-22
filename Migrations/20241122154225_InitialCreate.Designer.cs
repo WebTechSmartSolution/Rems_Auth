@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rems_Auth.Data;
 
@@ -11,9 +12,11 @@ using Rems_Auth.Data;
 namespace Rems_Auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241122154225_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,6 +55,12 @@ namespace Rems_Auth.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Bathrooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Bedrooms")
+                        .HasColumnType("int");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -64,6 +73,9 @@ namespace Rems_Auth.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GarageSize")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GarageSizeDescription")
                         .HasColumnType("int");
 
                     b.Property<int>("NoOfBathrooms")
@@ -99,6 +111,10 @@ namespace Rems_Auth.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TotalArea")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -111,6 +127,9 @@ namespace Rems_Auth.Migrations
 
                     b.Property<Guid?>("UserId1")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("YearBuilt")
+                        .HasColumnType("int");
 
                     b.Property<int>("YearConstructed")
                         .HasColumnType("int");

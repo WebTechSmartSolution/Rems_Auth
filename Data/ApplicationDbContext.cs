@@ -13,18 +13,27 @@ namespace Rems_Auth.Data
     public DbSet<User> Users { get; set; }
 
         public DbSet<AddListing> Listings { get; set; }
+        public DbSet<Image> Images { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            // Configure relationships between User and Listing
-            modelBuilder.Entity<AddListing>()
-                .HasOne(listing => listing.User)
-                .WithMany(user => user.Listings)
-                .HasForeignKey(listing => listing.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Cascade delete listings when user is deleted
+            base.OnModelCreating(builder);
 
-            base.OnModelCreating(modelBuilder);
+            // Configure the relationship between Listing and User
+            builder.Entity<AddListing>()
+                .HasOne(l => l.User)
+                .WithMany()  // A user can have many listings
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure the relationship between Listing and Image
+            builder.Entity<Image>()
+                .HasOne(i => i.Listing)
+                .WithMany(l => l.Images)
+                .HasForeignKey(i => i.ListingId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 
 }

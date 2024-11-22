@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Rems_Auth.Dtos;
 using Rems_Auth.Services;
+using System.Security.Claims;
 
 namespace Rems_Auth.Controllers
 {
@@ -8,92 +9,85 @@ namespace Rems_Auth.Controllers
     [ApiController]
     public class ListingsController : ControllerBase
     {
-        private readonly IListingService _service;
+        private readonly IListingService _listingService;
 
-        public ListingsController(IListingService service)
+        public ListingsController(IListingService listingService)
         {
-            _service = service;
+            _listingService = listingService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddListing(ListingRequest request)
+        // File: Controllers/ListingController.cs
+        [HttpPost]
+        public async Task<ActionResult<ListingResponse>> AddListing([FromForm] ListingRequest request)
         {
             try
             {
-                var response = await _service.AddListingAsync(request);
-                return CreatedAtAction(nameof(GetListingById), new { id = response.Id }, response);
+                // Extract user ID from the token using IHttpContextAccessor
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userId, out var parsedUserId))
+                {
+                    return Unauthorized("Invalid user ID in token.");
+                }
+
+                // Call the service to create the listing
+                var listingResponse = await _listingService.CreateListingAsync(request, parsedUserId);
+
+                // Return CreatedAtAction response
+                return CreatedAtAction(nameof(GetListingById), new { id = listingResponse.Id }, listingResponse);
             }
             catch (Exception ex)
             {
-                // Log the exception (use logging library in production)
-                Console.WriteLine($"Error in AddListing: {ex.Message}");
-                return StatusCode(500, "An error occurred while adding the listing.");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> GetAllListings()
+        public async Task<ActionResult<List<ListingResponse>>> GetAllListings()
         {
-            try
-            {
-                var listings = await _service.GetAllListingsAsync();
-                return Ok(listings);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error in GetAllListings: {ex.Message}");
-                return StatusCode(500, "An error occurred while retrieving listings.");
-            }
+            return Ok(await _listingService.GetAllListingsAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetListingById(int id)
+        public async Task<ActionResult<ListingResponse>> GetListingById(Guid id)
         {
-            try
+            var listing = await _listingService.GetListingByIdAsync(id);
+            if (listing == null)
             {
-                var listing = await _service.GetListingByIdAsync(id);
-                if (listing == null) return NotFound();
-                return Ok(listing);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error in GetListingById: {ex.Message}");
-                return StatusCode(500, "An error occurred while retrieving the listing.");
-            }
+            return Ok(listing);
         }
+
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetListingsByUser(int userId)
+        public async Task<ActionResult<List<ListingResponse>>> GetListingsByUserId(Guid userId)
         {
-            try
+            var listings = await _listingService.GetListingsByUserIdAsync(userId);
+            return Ok(listings);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateListing(Guid id, [FromBody] UpdateListingRequest request)
+        {
+            var updatedListing = await _listingService.UpdateListingAsync(id, request);
+            if (updatedListing == null)
             {
-                var listings = await _service.GetListingsByUserAsync(userId);
-                if (listings == null || !listings.Any()) return NotFound($"No listings found for user with ID {userId}.");
-                return Ok(listings);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in GetListingsByUser: {ex.Message}");
-                return StatusCode(500, "An error occurred while retrieving user-specific listings.");
-            }
+            return Ok(updatedListing);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteListing(int id)
+        public async Task<IActionResult> DeleteListing(Guid id)
         {
-            try
+            var success = await _listingService.DeleteListingAsync(id);
+            if (!success)
             {
-                var result = await _service.DeleteListingAsync(id);
-                if (!result) return NotFound();
-                return NoContent();
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error in DeleteListing: {ex.Message}");
-                return StatusCode(500, "An error occurred while deleting the listing.");
-            }
+            return NoContent();
         }
     }
+
 }
