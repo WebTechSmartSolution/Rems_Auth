@@ -36,6 +36,8 @@ namespace Rems_Auth.Services
                  NoOfFloors = request.NoOfFloors,
                  GarageSize = request.GarageSize,
                  YearConstructed = request.YearConstructed,
+                 Email = request.Email,
+                 Phone = request.Phone,
 
  
                  Address = request.Address,
@@ -96,6 +98,8 @@ namespace Rems_Auth.Services
                  NoOfFloors = createdListing.NoOfFloors,
                  GarageSize = createdListing.GarageSize,
                  YearConstructed = createdListing.YearConstructed,
+                 Email = createdListing.Email,
+                 Phone = createdListing.Phone,
 
                   // Location
                 Address = createdListing.Address,
@@ -153,6 +157,8 @@ namespace Rems_Auth.Services
                 NoOfFloors = l.NoOfFloors,
                 GarageSize = l.GarageSize,
                 YearConstructed = l.YearConstructed,
+                Email = l.Email,
+                Phone = l.Phone,
 
                 // Location
                 Address = l.Address,
@@ -190,6 +196,8 @@ namespace Rems_Auth.Services
                 NoOfFloors = listing.NoOfFloors,
                 GarageSize = listing.GarageSize,
                 YearConstructed = listing.YearConstructed,
+                Email = listing.Email,
+                Phone = listing.Phone,
 
                   // Location
                 Address = listing.Address,
@@ -223,6 +231,8 @@ namespace Rems_Auth.Services
                 NoOfFloors = l.NoOfFloors,
                 GarageSize = l.GarageSize,
                 YearConstructed = l.YearConstructed,
+                Email = l.Email,
+                Phone = l.Phone,
 
                 // Location
                 Address = l.Address,
@@ -261,6 +271,8 @@ namespace Rems_Auth.Services
                  NoOfFloors = request.NoOfFloors,
                  GarageSize = request.GarageSize,
                  YearConstructed = request.YearConstructed,
+                 Email = request.Email,
+                 Phone = request.Phone,
 
                  // Location
                  Address = request.Address,
@@ -290,6 +302,8 @@ namespace Rems_Auth.Services
                 NoOfFloors = updatedListing.NoOfFloors,
                 GarageSize = updatedListing.GarageSize,
                 YearConstructed = updatedListing.YearConstructed,
+                Email = updatedListing.Email,
+                Phone = updatedListing.Phone,
 
                 // Location
                 Address = updatedListing.Address,
