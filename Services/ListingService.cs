@@ -80,13 +80,34 @@ namespace Rems_Auth.Services
             // Map the created listing and associated images to a response DTO
             return new ListingResponse
             {
-                Id = createdListing.Id,
-                PropertyName = createdListing.PropertyName,
-                Description = createdListing.Description,
+                 Id = createdListing.Id,
+                 PropertyName = createdListing.PropertyName,
+                 PropertyType = createdListing.PropertyType,
+                 CurrencyType = createdListing.CurrencyType,
+                 SalePrice = createdListing.SalePrice,
+                 OfferPrice = createdListing.OfferPrice,
+
+                 // Property Details
+                 PropertyId = createdListing.PropertyId,
+                 PricePerSqft = createdListing.PricePerSqft,
+                 NoOfBedrooms = createdListing.NoOfBedrooms,
+                 NoOfBathrooms = createdListing.NoOfBathrooms,
+                 Sqft = createdListing.Sqft,
+                 NoOfFloors = createdListing.NoOfFloors,
+                 GarageSize = createdListing.GarageSize,
+                 YearConstructed = createdListing.YearConstructed,
+
+                  // Location
                 Address = createdListing.Address,
-                SalePrice = createdListing.SalePrice,
+                City = createdListing.City,
+                State = createdListing.State,
+                ZipCode = createdListing.ZipCode,
+
+
+                
                 Images = images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
-                CreatedAt = createdListing.CreatedAt
+                CreatedAt = createdListing.CreatedAt,
+                UpdatedAt = createdListing.UpdatedAt
             };
         }
 
@@ -118,10 +139,33 @@ namespace Rems_Auth.Services
             {
                 Id = l.Id,
                 PropertyName = l.PropertyName,
-                Description = l.Description,
-                Address = l.Address,
+                PropertyType = l.PropertyType,
+                CurrencyType = l.CurrencyType,
                 SalePrice = l.SalePrice,
-                Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
+                OfferPrice = l.OfferPrice,
+
+                   // Property Details
+                PropertyId = l.PropertyId,
+                PricePerSqft = l.PricePerSqft,
+                NoOfBedrooms = l.NoOfBedrooms,
+                NoOfBathrooms = l.NoOfBathrooms,
+                Sqft = l.Sqft,
+                NoOfFloors = l.NoOfFloors,
+                GarageSize = l.GarageSize,
+                YearConstructed = l.YearConstructed,
+
+                // Location
+                Address = l.Address,
+                City = l.City,
+                State = l.State,
+                ZipCode = l.ZipCode,
+
+
+
+                
+                Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+                CreatedAt = l.CreatedAt,
+                UpdatedAt = l.UpdatedAt
             }).ToList();
         }
 
@@ -132,10 +176,29 @@ namespace Rems_Auth.Services
             {
                 Id = listing.Id,
                 PropertyName = listing.PropertyName,
-                Description = listing.Description,
-                Address = listing.Address,
+                PropertyType = listing.PropertyType,
+                CurrencyType = listing.CurrencyType,
                 SalePrice = listing.SalePrice,
-                Images = listing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
+                OfferPrice = listing.OfferPrice,
+
+                // Property Details
+                PropertyId = listing.PropertyId,
+                PricePerSqft = listing.PricePerSqft,
+                NoOfBedrooms = listing.NoOfBedrooms,
+                NoOfBathrooms = listing.NoOfBathrooms,
+                Sqft = listing.Sqft,
+                NoOfFloors = listing.NoOfFloors,
+                GarageSize = listing.GarageSize,
+                YearConstructed = listing.YearConstructed,
+
+                  // Location
+                Address = listing.Address,
+                City = listing.City,
+                State = listing.State,
+                ZipCode = listing.ZipCode,
+                Images = listing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+                 CreatedAt = listing.CreatedAt,
+                 UpdatedAt = listing.UpdatedAt
             };
         }
 
@@ -146,10 +209,33 @@ namespace Rems_Auth.Services
             {
                 Id = l.Id,
                 PropertyName = l.PropertyName,
-                Description = l.Description,
-                Address = l.Address,
+                PropertyType = l.PropertyType,
+                CurrencyType = l.CurrencyType,
                 SalePrice = l.SalePrice,
-                Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
+                OfferPrice = l.OfferPrice,
+
+                // Property Details
+                PropertyId = l.PropertyId,
+                PricePerSqft = l.PricePerSqft,
+                NoOfBedrooms = l.NoOfBedrooms,
+                NoOfBathrooms = l.NoOfBathrooms,
+                Sqft = l.Sqft,
+                NoOfFloors = l.NoOfFloors,
+                GarageSize = l.GarageSize,
+                YearConstructed = l.YearConstructed,
+
+                // Location
+                Address = l.Address,
+                City = l.City,
+                State = l.State,
+                ZipCode = l.ZipCode,
+
+               // Images
+                Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+
+                 // Metadata
+                 CreatedAt = l.CreatedAt,
+                 UpdatedAt = l.UpdatedAt
             }).ToList();
         }
 
@@ -158,22 +244,61 @@ namespace Rems_Auth.Services
             var listing = new AddListing
             {
                 Id = id,
-                PropertyName = request.PropertyName,
-                PropertyId = request.PropertyId,
-                Description = request.Description,
-                Address = request.Address,
-                SalePrice = request.SalePrice
+
+                // Property Info
+                 PropertyName = request.PropertyName,
+                 PropertyType = request.PropertyType,
+                 CurrencyType = request.CurrencyType,
+                 SalePrice = request.SalePrice,
+                 OfferPrice = request.OfferPrice,
+
+                 // Property Details
+                 PropertyId = request.PropertyId,
+                 PricePerSqft = request.PricePerSqft,
+                 NoOfBedrooms = request.NoOfBedrooms,
+                 NoOfBathrooms = request.NoOfBathrooms,
+                 Sqft = request.Sqft,
+                 NoOfFloors = request.NoOfFloors,
+                 GarageSize = request.GarageSize,
+                 YearConstructed = request.YearConstructed,
+
+                 // Location
+                 Address = request.Address,
+                 City = request.City,
+                 State = request.State,
+                 ZipCode = request.ZipCode
             };
 
             var updatedListing = await _listingRepository.UpdateListingAsync(listing);
             return new ListingResponse
             {
                 Id = updatedListing.Id,
+
+                // Property Info
                 PropertyName = updatedListing.PropertyName,
-                Description = updatedListing.Description,
-                Address = updatedListing.Address,
+                PropertyType = updatedListing.PropertyType,
+                CurrencyType = updatedListing.CurrencyType,
                 SalePrice = updatedListing.SalePrice,
-                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
+                OfferPrice = updatedListing.OfferPrice,
+
+                // Property Details
+                PropertyId = updatedListing.PropertyId,
+                PricePerSqft = updatedListing.PricePerSqft,
+                NoOfBedrooms = updatedListing.NoOfBedrooms,
+                NoOfBathrooms = updatedListing.NoOfBathrooms,
+                Sqft = updatedListing.Sqft,
+                NoOfFloors = updatedListing.NoOfFloors,
+                GarageSize = updatedListing.GarageSize,
+                YearConstructed = updatedListing.YearConstructed,
+
+                // Location
+                Address = updatedListing.Address,
+                City = updatedListing.City,
+                State = updatedListing.State,
+                ZipCode = updatedListing.ZipCode,
+                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+                CreatedAt = updatedListing.CreatedAt,
+                UpdatedAt = updatedListing.UpdatedAt
             };
         }
 
