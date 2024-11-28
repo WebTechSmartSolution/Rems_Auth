@@ -56,6 +56,7 @@ namespace Rems_Auth.Services
                     Token = accessToken,
                     Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
                     RefreshToken = refreshToken,
+                    Email = user.Email,
                     RefreshTokenExpires = user.RefreshTokenExpires.Value,
                     Message = "Authentication successful."
                 };
