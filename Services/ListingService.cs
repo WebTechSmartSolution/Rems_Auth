@@ -241,11 +241,12 @@ namespace Rems_Auth.Services
                 ZipCode = l.ZipCode,
 
                // Images
-                Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
 
                  // Metadata
                  CreatedAt = l.CreatedAt,
-                 UpdatedAt = l.UpdatedAt
+                 UpdatedAt = l.UpdatedAt,
+                 Images = l.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+
             }).ToList();
         }
 
@@ -310,9 +311,11 @@ namespace Rems_Auth.Services
                 City = updatedListing.City,
                 State = updatedListing.State,
                 ZipCode = updatedListing.ZipCode,
-                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
                 CreatedAt = updatedListing.CreatedAt,
-                UpdatedAt = updatedListing.UpdatedAt
+                UpdatedAt = updatedListing.UpdatedAt,
+                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
+
+
             };
         }
 

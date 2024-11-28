@@ -3,6 +3,8 @@
     public class UpdateListingRequest
     {
         public string PropertyName { get; set; }
+        public string PropertyType { get; set; }
+        public string CurrencyType { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
 
@@ -16,14 +18,9 @@
         public int GarageSize { get; set; }
         public int YearConstructed { get; set; }
 
-        // Description
-        public string Title { get; set; }
-        public string TotalArea { get; set; }
-        public string Description { get; set; }
-        public int Bedrooms { get; set; }
-        public int Bathrooms { get; set; }
-        public int GarageSizeDescription { get; set; }
-        public int YearBuilt { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+
 
         // Location
         public string Address { get; set; }

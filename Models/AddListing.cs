@@ -12,8 +12,8 @@ namespace Rems_Auth.Models
         // Property Info
         
         public string PropertyName { get; set; }
-        public string PropertyType {get ; set}
-        public string CurrencyType {get ; set}
+        public string PropertyType { get; set; }
+        public string CurrencyType { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
 
@@ -27,7 +27,7 @@ namespace Rems_Auth.Models
         public int GarageSize { get; set; }
         public int YearConstructed { get; set; }
 
-        public string Email {get; set}
+        public string Email { get; set; }
         public string Phone {get; set;}
        
         // Location

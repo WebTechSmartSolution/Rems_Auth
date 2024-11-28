@@ -16,8 +16,7 @@ namespace Rems_Auth.Controllers
             _listingService = listingService;
         }
 
-        [HttpPost]
-        // File: Controllers/ListingController.cs
+       
         [HttpPost]
         public async Task<ActionResult<ListingResponse>> AddListing([FromForm] ListingRequest request)
         {
