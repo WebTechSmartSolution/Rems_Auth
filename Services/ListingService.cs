@@ -21,13 +21,33 @@ namespace Rems_Auth.Services
             // Create a new Listing entity
             var listing = new AddListing
             {
-                PropertyName = request.PropertyName,
-                Description = request.Description,
-                Address = request.Address,
-                PropertyId = request.PropertyId,
-                SalePrice = request.SalePrice,
-                UserId = userId, // Associate the listing with the user
-                CreatedAt = DateTime.UtcNow
+                 PropertyName = request.PropertyName,
+    PropertyType = request.PropertyType,
+    CurrencyType = request.CurrencyType,
+    SalePrice = request.SalePrice,
+    OfferPrice = request.OfferPrice,
+
+    
+    PropertyId = request.PropertyId,
+    PricePerSqft = request.PricePerSqft,
+    NoOfBedrooms = request.NoOfBedrooms,
+    NoOfBathrooms = request.NoOfBathrooms,
+    Sqft = request.Sqft,
+    NoOfFloors = request.NoOfFloors,
+    GarageSize = request.GarageSize,
+    YearConstructed = request.YearConstructed,
+
+ 
+    Address = request.Address,
+    City = request.City,
+    State = request.State,
+    ZipCode = request.ZipCode,
+
+    
+    UserId = userId, // Associate the listing with the user
+    CreatedAt = DateTime.UtcNow
+
+                
             };
 
             // Save the listing to the database
