@@ -19,7 +19,8 @@
         public int GarageSize { get; set; }
         public int YearConstructed { get; set; }
 
-        
+        public string Email {get; set}
+        public string Phone {get; set;}
 
         // Location
         public string Address { get; set; }
