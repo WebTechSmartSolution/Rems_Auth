@@ -22,30 +22,30 @@ namespace Rems_Auth.Services
             var listing = new AddListing
             {
                  PropertyName = request.PropertyName,
-    PropertyType = request.PropertyType,
-    CurrencyType = request.CurrencyType,
-    SalePrice = request.SalePrice,
-    OfferPrice = request.OfferPrice,
+                 PropertyType = request.PropertyType,
+                 CurrencyType = request.CurrencyType,
+                 SalePrice = request.SalePrice,
+                 OfferPrice = request.OfferPrice,
 
     
-    PropertyId = request.PropertyId,
-    PricePerSqft = request.PricePerSqft,
-    NoOfBedrooms = request.NoOfBedrooms,
-    NoOfBathrooms = request.NoOfBathrooms,
-    Sqft = request.Sqft,
-    NoOfFloors = request.NoOfFloors,
-    GarageSize = request.GarageSize,
-    YearConstructed = request.YearConstructed,
+                 PropertyId = request.PropertyId,
+                 PricePerSqft = request.PricePerSqft,
+                 NoOfBedrooms = request.NoOfBedrooms,
+                 NoOfBathrooms = request.NoOfBathrooms,
+                 Sqft = request.Sqft,
+                 NoOfFloors = request.NoOfFloors,
+                 GarageSize = request.GarageSize,
+                 YearConstructed = request.YearConstructed,
 
  
-    Address = request.Address,
-    City = request.City,
-    State = request.State,
-    ZipCode = request.ZipCode,
+                 Address = request.Address,
+                 City = request.City,
+                 State = request.State,
+                 ZipCode = request.ZipCode,
 
     
-    UserId = userId, // Associate the listing with the user
-    CreatedAt = DateTime.UtcNow
+                 UserId = userId, // Associate the listing with the user
+                 CreatedAt = DateTime.UtcNow
 
                 
             };
