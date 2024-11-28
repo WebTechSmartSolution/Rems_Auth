@@ -27,7 +27,8 @@ namespace Rems_Auth.Models
         public int GarageSize { get; set; }
         public int YearConstructed { get; set; }
 
-        
+        public string Email {get; set}
+        public string Phone {get; set;}
        
         // Location
      
