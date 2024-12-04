@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using Rems_Auth.Repositories;
 using Rems_Auth.Services;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,10 +24,28 @@ namespace Rems_Auth.Middleware
 
                 if (token != null)
                 {
-                    var userEmail = tokenService.ValidateToken(token);
-                    if (userEmail != null)
+                    var tokenData = tokenService.ValidateToken(token);
+
+                    if (tokenData.HasValue)
                     {
-                        context.Items["User"] = await userRepository.GetUserByEmailAsync(userEmail);
+                        var userId = tokenData.Value.userId;
+
+                        var user = await userRepository.GetUserByIdAsync(userId);
+
+                        if (user == null)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status404NotFound;
+                            await context.Response.WriteAsync("User not found.");
+                            return;
+                        }
+
+                        context.Items["User"] = user;
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        await context.Response.WriteAsync("Invalid token");
+                        return;
                     }
                 }
 
@@ -35,15 +53,15 @@ namespace Rems_Auth.Middleware
             }
             catch (SecurityTokenException ex)
             {
-                // Log and handle token validation errors
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("Invalid token");
+                await context.Response.WriteAsync($"Token error: {ex.Message}");
             }
             catch (Exception ex)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsync($"An unexpected error occurred: {ex.Message}");
+                await context.Response.WriteAsync($"Unexpected error: {ex.Message}");
             }
         }
+
     }
 }
