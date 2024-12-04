@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Rems_Auth.Data;
 using Rems_Auth.Models;
 using System;
@@ -23,6 +23,17 @@ namespace Rems_Auth.Repositories
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while fetching the user by email", ex);
+            }
+        }
+        public async Task<User> GetUserByIdAsync(Guid userId)
+        {
+            try
+            {
+                return await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the user by ID", ex);
             }
         }
 
