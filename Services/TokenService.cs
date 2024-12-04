@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Rems_Auth.Models;
 using Rems_Auth.Utilities;
 using System.Security.Claims;
@@ -20,28 +20,37 @@ namespace Rems_Auth.Services
         public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+
+            // Decode the base64-encoded secret key
+            var key = Convert.FromBase64String(_jwtSettings.Secret);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Name, user.Email)
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, user.Email),
+                    new Claim("nameid", user.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
-        public string ValidateToken(string token)
+        public (string userEmail, Guid userId)? ValidateToken(string token)
         {
-            if (token == null)
+            if (string.IsNullOrWhiteSpace(token))
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+
+            // Decode the base64-encoded secret key
+            var key = Convert.FromBase64String(_jwtSettings.Secret);
+
             try
             {
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
@@ -56,12 +65,19 @@ namespace Rems_Auth.Services
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userEmail = jwtToken.Claims.First(x => x.Type == ClaimTypes.Name).Value;
 
-                return userEmail;
+                var userEmail = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+                var userId = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value;
+
+                if (Guid.TryParse(userId, out var parsedUserId))
+                    return (userEmail, parsedUserId);
+
+                return null;
             }
-            catch
+            catch (Exception ex)
             {
+                // Optional: Log the exception for debugging
+                Console.WriteLine($"Token validation failed: {ex.Message}");
                 return null;
             }
         }
