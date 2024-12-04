@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Rems_Auth.Dtos;
 using Rems_Auth.Services;
 using System.Security.Claims;
@@ -17,7 +17,10 @@ namespace Rems_Auth.Controllers
         }
 
        
+        [HttpPost("AddListings")]
+
         [HttpPost]
+
         public async Task<ActionResult<ListingResponse>> AddListing([FromForm] ListingRequest request)
         {
             try
