@@ -25,6 +25,17 @@ namespace Rems_Auth.Repositories
                 throw new Exception("An error occurred while fetching the user by email", ex);
             }
         }
+        public async Task<User> GetUserByIdAsync(Guid userId)
+        {
+            try
+            {
+                return await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the user by ID", ex);
+            }
+        }
 
         public async Task<User> GetUserByResetTokenAsync(string hashedResetToken)
         {

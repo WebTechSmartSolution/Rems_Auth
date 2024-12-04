@@ -17,7 +17,10 @@ namespace Rems_Auth.Controllers
         }
 
        
+        [HttpPost("AddListings")]
+
         [HttpPost]
+
         public async Task<ActionResult<ListingResponse>> AddListing([FromForm] ListingRequest request)
         {
             try

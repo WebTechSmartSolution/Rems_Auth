@@ -14,6 +14,7 @@ namespace Rems_Auth.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
 
         public AuthController(IAuthService authService , IUserRepository userRepository)
         {
@@ -46,7 +47,7 @@ namespace Rems_Auth.Controllers
                 return Unauthorized("Invalid or expired refresh token");
             }
 
-            var newAccessToken = _authService.GenerateAccessToken(user);
+            var newAccessToken = _tokenService.GenerateToken(user);
             var newRefreshToken = _authService.GenerateRefreshToken();
 
             // Update the refresh token in the database

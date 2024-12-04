@@ -10,7 +10,7 @@ namespace Rems_Auth.Services
         Task ForgotPasswordAsync(ForgotPasswordRequest forgotPasswordRequest);
         Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest resetPasswordRequest);
         Task<User> ValidateRefreshTokenAsync(string refreshToken);
-        string GenerateAccessToken(User user);
+        //string GenerateAccessToken(User user);
         string GenerateRefreshToken();
     }
 }

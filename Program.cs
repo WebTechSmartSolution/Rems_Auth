@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+//using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Rems_Auth.Data;
 using Rems_Auth.Middleware;
@@ -33,23 +34,24 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IListingRepository, ListingRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IListingService, ListingService>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 // Configure JWT authentication
+//var key = Convert.FromBase64String(builder.Configuration["JwtSettings:Secret"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secret"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["JwtSettings:Secret"])),
             ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-            ValidAudience = builder.Configuration["JwtSettings:Audience"],
             ValidateLifetime = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],  // Make sure this matches the 'aud' claim in the token
             ClockSkew = TimeSpan.Zero
         };
     });
@@ -83,15 +85,18 @@ else
 }
 app.UseSwagger();
 app.UseSwaggerUI();
+//IdentityModelEventSource.ShowPII = true;
+
 //app.UseDeveloperExceptionPage(); // only for testing, remove in production
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
+// JWT middleware for handling token validation
+app.UseMiddleware<JwtMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// JWT middleware for handling token validation
-app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
