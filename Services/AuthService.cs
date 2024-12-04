@@ -1,4 +1,4 @@
-﻿using Rems_Auth.Dtos;
+using Rems_Auth.Dtos;
 using Rems_Auth.Models;
 using Rems_Auth.Repositories;
 using Rems_Auth.Utilities;
@@ -42,7 +42,7 @@ namespace Rems_Auth.Services
                 }
 
                 // Generate JWT token
-                var accessToken = GenerateAccessToken(user);
+                var accessToken = _tokenService.GenerateToken(user);
                 var refreshToken = GenerateRefreshToken();
 
                 user.RefreshToken = refreshToken;
@@ -166,25 +166,25 @@ namespace Rems_Auth.Services
         }
 
         // Generate JWT Access Token
-        public string GenerateAccessToken(User user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Convert.FromBase64String(_jwtSettings.Secret);
+        //public string GenerateAccessToken(User user)
+        //{
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var key = Convert.FromBase64String(_jwtSettings.Secret);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+        //    var tokenDescriptor = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new[]
+        //        {
+        //            new Claim(ClaimTypes.Name, user.Email),
+        //            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+        //        }),
+        //        Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        //    };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        //    var token = tokenHandler.CreateToken(tokenDescriptor);
+        //    return tokenHandler.WriteToken(token);
+        //}
 
         // Generate Refresh Token
         public string GenerateRefreshToken()
