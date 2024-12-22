@@ -81,5 +81,30 @@ namespace Rems_Auth.Services
                 return null;
             }
         }
+        public string GenerateTokenForAdmin(Admin admin)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            // Decode the base64-encoded secret key
+            var key = Convert.FromBase64String(_jwtSettings.Secret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+            new Claim(ClaimTypes.Name, admin.Username),
+            new Claim("adminid", admin.Id.ToString()),
+            new Claim(ClaimTypes.Role, "Admin")
+        }),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
     }
 }

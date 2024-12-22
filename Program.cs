@@ -37,6 +37,9 @@ builder.Services.AddScoped<IListingRepository, ListingRepository>();
 //builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IListingService, ListingService>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IAdminService, AdminService>(); // Example for Admin service
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
 
 // Configure JWT authentication
 //var key = Convert.FromBase64String(builder.Configuration["JwtSettings:Secret"]);
@@ -70,6 +73,21 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate(); // Apply migrations
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
 
 // Enable detailed error pages
 if (app.Environment.IsDevelopment())
