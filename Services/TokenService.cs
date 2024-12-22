@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Rems_Auth.Models;
 using Rems_Auth.Utilities;
 using System.Security.Claims;

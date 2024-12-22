@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using Rems_Auth.Repositories;
 using Rems_Auth.Services;
 using System.IdentityModel.Tokens.Jwt;

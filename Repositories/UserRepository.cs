@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Rems_Auth.Data;
 using Rems_Auth.Models;
 using System;

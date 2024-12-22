@@ -1,4 +1,4 @@
-﻿using Rems_Auth.Models;
+using Rems_Auth.Models;
 
 namespace Rems_Auth.Repositories
 {
