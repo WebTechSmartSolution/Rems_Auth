@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+
 //using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Rems_Auth.Data;
@@ -88,7 +90,12 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+//    RequestPath = "/images" // This maps "/images" to the "uploads/images" folder
+//});
+app.UseStaticFiles();
 // Enable detailed error pages
 if (app.Environment.IsDevelopment())
 {
