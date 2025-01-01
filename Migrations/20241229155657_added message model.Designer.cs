@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rems_Auth.Data;
 
@@ -11,9 +12,11 @@ using Rems_Auth.Data;
 namespace Rems_Auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241229155657_added message model")]
+    partial class addedmessagemodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +43,33 @@ namespace Rems_Auth.Migrations
                     b.HasIndex("ListingId");
 
                     b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
@@ -171,8 +201,8 @@ namespace Rems_Auth.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("935ec8c7-70ed-4478-8c93-6f9a2f869d11"),
-                            CreatedAt = new DateTime(2024, 12, 29, 16, 32, 58, 553, DateTimeKind.Utc).AddTicks(6644),
+                            Id = new Guid("d98f3887-1263-4fe7-8473-3ea5ca2037aa"),
+                            CreatedAt = new DateTime(2024, 12, 29, 15, 56, 56, 422, DateTimeKind.Utc).AddTicks(794),
                             PasswordHash = "6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=",
                             Username = "admin"
                         });
@@ -199,39 +229,6 @@ namespace Rems_Auth.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
-                });
-
-            modelBuilder.Entity("Rems_Auth.Models.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ReceiverId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Rems_Auth.Models.User", b =>
@@ -297,6 +294,17 @@ namespace Rems_Auth.Migrations
                     b.Navigation("Listing");
                 });
 
+            modelBuilder.Entity("Message", b =>
+                {
+                    b.HasOne("Rems_Auth.Models.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+                });
+
             modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
                 {
                     b.HasOne("Rems_Auth.Models.User", "User")
@@ -312,50 +320,14 @@ namespace Rems_Auth.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Rems_Auth.Models.Message", b =>
-                {
-                    b.HasOne("Rems_Auth.Models.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rems_Auth.Models.User", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Rems_Auth.Models.User", "Sender")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("Rems_Auth.Models.AddListing", b =>
                 {
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("Rems_Auth.Models.Chat", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
             modelBuilder.Entity("Rems_Auth.Models.User", b =>
                 {
                     b.Navigation("Listings");
-
-                    b.Navigation("ReceivedMessages");
-
-                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }

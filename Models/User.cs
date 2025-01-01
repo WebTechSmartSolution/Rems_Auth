@@ -28,6 +28,8 @@ namespace Rems_Auth.Models
 
         // Relationship with Listing
         public ICollection<AddListing> Listings { get; set; } = new List<AddListing>();
+        public virtual ICollection<Message> SentMessages { get; set; } // Messages sent by the user
+        public virtual ICollection<Message> ReceivedMessages { get; set; }
 
     }
 }

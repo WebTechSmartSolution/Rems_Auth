@@ -19,14 +19,13 @@ namespace Rems_Auth.Controllers
        
         [HttpPost("AddListings")]
 
-        [HttpPost]
-
         public async Task<ActionResult<ListingResponse>> AddListing([FromForm] ListingRequest request)
         {
             try
             {
                 // Extract user ID from the token using IHttpContextAccessor
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //var userId = User.FindFirst("nameid")?.Value;
                 if (!Guid.TryParse(userId, out var parsedUserId))
                 {
                     return Unauthorized("Invalid user ID in token.");

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-
-//using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Rems_Auth.Data;
 using Rems_Auth.Middleware;
@@ -13,17 +11,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Email settings from configuration and environment variables
-builder.Services.Configure<EmailSettings>(options =>
+// Configure Email settings
+builder.Services.PostConfigure<EmailSettings>(options =>
 {
-    options.SmtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER") ?? builder.Configuration["EmailSettings:SmtpServer"];
-    options.SmtpPort = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? builder.Configuration["EmailSettings:SmtpPort"] ?? "25");
-    options.SenderEmail = Environment.GetEnvironmentVariable("SENDER_EMAIL") ?? builder.Configuration["EmailSettings:SenderEmail"];
-    options.SenderPassword = Environment.GetEnvironmentVariable("SENDER_PASSWORD") ?? builder.Configuration["EmailSettings:SenderPassword"];
+    options.SmtpServer ??= builder.Configuration["EmailSettings:SmtpServer"];
+    options.SmtpPort = options.SmtpPort == 0 ? int.Parse(builder.Configuration["EmailSettings:SmtpPort"] ?? "25") : options.SmtpPort;
+    options.SenderEmail ??= builder.Configuration["EmailSettings:SenderEmail"];
+    options.SenderPassword ??= builder.Configuration["EmailSettings:SenderPassword"];
 });
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
-// Configure JWT settings from configuration
+// Configure JWT settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 // Configure database context
@@ -36,15 +33,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IListingRepository, ListingRepository>();
-//builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IListingService, ListingService>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IAdminService, AdminService>(); // Example for Admin service
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
-
 // Configure JWT authentication
-//var key = Convert.FromBase64String(builder.Configuration["JwtSettings:Secret"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -56,7 +50,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["JwtSettings:Audience"],  // Make sure this matches the 'aud' claim in the token
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
             ClockSkew = TimeSpan.Zero
         };
     });
@@ -64,39 +58,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // Allow your frontend URL
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Allow credentials (cookies, authorization headers, etc.)
     });
 });
 
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate(); // Apply migrations
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "An error occurred while applying migrations: {Message}", ex.Message);
     }
 }
 
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
-//    RequestPath = "/images" // This maps "/images" to the "uploads/images" folder
-//});
+app.MapHub<ChatHub>("/chatHub");
+
 app.UseStaticFiles();
-// Enable detailed error pages
+app.UseCors("AllowSpecificOrigins");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -114,15 +109,11 @@ app.UseSwaggerUI();
 
 //app.UseDeveloperExceptionPage(); // only for testing, remove in production
 
-app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 // JWT middleware for handling token validation
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.MapControllers();
-
 app.Run();

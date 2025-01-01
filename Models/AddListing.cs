@@ -14,6 +14,8 @@ namespace Rems_Auth.Models
         public string PropertyName { get; set; }
         public string PropertyType { get; set; }
         public string CurrencyType { get; set; }
+        public string status { get; set; }
+        public string Description { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
 

@@ -7,6 +7,8 @@
         public string CurrencyType { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
+        public string status { get; set; }
+        public string Description { get; set; }
 
         // Property Details
         public string PropertyId { get; set; }

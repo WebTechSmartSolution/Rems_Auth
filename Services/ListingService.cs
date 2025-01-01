@@ -1,4 +1,5 @@
-﻿using Rems_Auth.Dtos;
+﻿using Azure.Core;
+using Rems_Auth.Dtos;
 using Rems_Auth.Models;
 using Rems_Auth.Repositories;
 
@@ -26,7 +27,7 @@ namespace Rems_Auth.Services
                  CurrencyType = request.CurrencyType,
                  SalePrice = request.SalePrice,
                  OfferPrice = request.OfferPrice,
-
+                 status = request.status,
     
                  PropertyId = request.PropertyId,
                  PricePerSqft = request.PricePerSqft,
@@ -36,6 +37,7 @@ namespace Rems_Auth.Services
                  NoOfFloors = request.NoOfFloors,
                  GarageSize = request.GarageSize,
                  YearConstructed = request.YearConstructed,
+                 Description = request.Description,
                  Email = request.Email,
                  Phone = request.Phone,
 
@@ -83,14 +85,15 @@ namespace Rems_Auth.Services
             return new ListingResponse
             {
                  Id = createdListing.Id,
-                 PropertyName = createdListing.PropertyName,
+                OwnerId = createdListing.UserId,
+                PropertyName = createdListing.PropertyName,
                  PropertyType = createdListing.PropertyType,
                  CurrencyType = createdListing.CurrencyType,
                  SalePrice = createdListing.SalePrice,
                  OfferPrice = createdListing.OfferPrice,
-
-                 // Property Details
-                 PropertyId = createdListing.PropertyId,
+                status = createdListing.status,
+                // Property Details
+                PropertyId = createdListing.PropertyId,
                  PricePerSqft = createdListing.PricePerSqft,
                  NoOfBedrooms = createdListing.NoOfBedrooms,
                  NoOfBathrooms = createdListing.NoOfBathrooms,
@@ -98,7 +101,8 @@ namespace Rems_Auth.Services
                  NoOfFloors = createdListing.NoOfFloors,
                  GarageSize = createdListing.GarageSize,
                  YearConstructed = createdListing.YearConstructed,
-                 Email = createdListing.Email,
+                Description = createdListing.Description,
+                Email = createdListing.Email,
                  Phone = createdListing.Phone,
 
                   // Location
@@ -142,13 +146,14 @@ namespace Rems_Auth.Services
             return listings.Select(l => new ListingResponse
             {
                 Id = l.Id,
+                OwnerId = l.UserId,
                 PropertyName = l.PropertyName,
                 PropertyType = l.PropertyType,
                 CurrencyType = l.CurrencyType,
                 SalePrice = l.SalePrice,
                 OfferPrice = l.OfferPrice,
-
-                   // Property Details
+                status = l.status,
+                // Property Details
                 PropertyId = l.PropertyId,
                 PricePerSqft = l.PricePerSqft,
                 NoOfBedrooms = l.NoOfBedrooms,
@@ -157,6 +162,7 @@ namespace Rems_Auth.Services
                 NoOfFloors = l.NoOfFloors,
                 GarageSize = l.GarageSize,
                 YearConstructed = l.YearConstructed,
+                Description = l.Description,
                 Email = l.Email,
                 Phone = l.Phone,
 
@@ -181,12 +187,13 @@ namespace Rems_Auth.Services
             return new ListingResponse
             {
                 Id = listing.Id,
+                OwnerId = listing.UserId,
                 PropertyName = listing.PropertyName,
                 PropertyType = listing.PropertyType,
                 CurrencyType = listing.CurrencyType,
                 SalePrice = listing.SalePrice,
                 OfferPrice = listing.OfferPrice,
-
+                status = listing.status,
                 // Property Details
                 PropertyId = listing.PropertyId,
                 PricePerSqft = listing.PricePerSqft,
@@ -196,6 +203,7 @@ namespace Rems_Auth.Services
                 NoOfFloors = listing.NoOfFloors,
                 GarageSize = listing.GarageSize,
                 YearConstructed = listing.YearConstructed,
+                Description = listing.Description,
                 Email = listing.Email,
                 Phone = listing.Phone,
 
@@ -216,12 +224,13 @@ namespace Rems_Auth.Services
             return listings.Select(l => new ListingResponse
             {
                 Id = l.Id,
+                OwnerId = l.UserId,
                 PropertyName = l.PropertyName,
                 PropertyType = l.PropertyType,
                 CurrencyType = l.CurrencyType,
                 SalePrice = l.SalePrice,
                 OfferPrice = l.OfferPrice,
-
+                status = l.status,
                 // Property Details
                 PropertyId = l.PropertyId,
                 PricePerSqft = l.PricePerSqft,
@@ -231,6 +240,7 @@ namespace Rems_Auth.Services
                 NoOfFloors = l.NoOfFloors,
                 GarageSize = l.GarageSize,
                 YearConstructed = l.YearConstructed,
+                Description = l.Description,
                 Email = l.Email,
                 Phone = l.Phone,
 
@@ -262,9 +272,9 @@ namespace Rems_Auth.Services
                  CurrencyType = request.CurrencyType,
                  SalePrice = request.SalePrice,
                  OfferPrice = request.OfferPrice,
-
-                 // Property Details
-                 PropertyId = request.PropertyId,
+                status = request.status,
+                // Property Details
+                PropertyId = request.PropertyId,
                  PricePerSqft = request.PricePerSqft,
                  NoOfBedrooms = request.NoOfBedrooms,
                  NoOfBathrooms = request.NoOfBathrooms,
@@ -272,7 +282,8 @@ namespace Rems_Auth.Services
                  NoOfFloors = request.NoOfFloors,
                  GarageSize = request.GarageSize,
                  YearConstructed = request.YearConstructed,
-                 Email = request.Email,
+                Description = request.Description,
+                Email = request.Email,
                  Phone = request.Phone,
 
                  // Location
@@ -293,7 +304,7 @@ namespace Rems_Auth.Services
                 CurrencyType = updatedListing.CurrencyType,
                 SalePrice = updatedListing.SalePrice,
                 OfferPrice = updatedListing.OfferPrice,
-
+                status = updatedListing.status,
                 // Property Details
                 PropertyId = updatedListing.PropertyId,
                 PricePerSqft = updatedListing.PricePerSqft,
@@ -303,6 +314,7 @@ namespace Rems_Auth.Services
                 NoOfFloors = updatedListing.NoOfFloors,
                 GarageSize = updatedListing.GarageSize,
                 YearConstructed = updatedListing.YearConstructed,
+                Description = updatedListing.Description,
                 Email = updatedListing.Email,
                 Phone = updatedListing.Phone,
 

@@ -4,12 +4,13 @@
     {
         public Guid Id { get; set; }
         // Property Info
+        public Guid OwnerId { get; set; }
         public string PropertyName { get; set; }
         public string PropertyType { get; set; }
         public string CurrencyType { get; set; }
         public decimal SalePrice { get; set; }
         public decimal OfferPrice { get; set; }
-
+        public string status { get; set; }
         // Property Details
         public string PropertyId { get; set; }
         public decimal PricePerSqft { get; set; }
@@ -19,7 +20,7 @@
         public int NoOfFloors { get; set; }
         public int GarageSize { get; set; }
         public int YearConstructed { get; set; }
-
+        public string Description { get; set; }
         public string Email { get; set; }
         public string Phone {get; set;}
 
