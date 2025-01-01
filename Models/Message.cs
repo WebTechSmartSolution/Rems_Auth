@@ -8,7 +8,6 @@ namespace Rems_Auth.Models
         public Guid ChatId { get; set; } 
         public Guid SenderId { get; set; } 
         public Guid ReceiverId { get; set; }
-
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
         public virtual User Sender { get; set; } 
