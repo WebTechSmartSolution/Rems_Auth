@@ -6,11 +6,13 @@ namespace Rems_Auth.Repositories
     {
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByIdAsync(Guid userId);
-        Task<User> GetUserByIdAsync(int id);
         Task<User> GetUserByResetTokenAsync(string resetToken);
-        Task<User> GetUserByRefreshTokenAsync(string refreshToken); // New method
+        Task<User> GetUserByRefreshTokenAsync(string refreshToken);
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+
+        Task UpdateUserProfilePictureAsync(Guid userId, string profilePictureUrl);
         Task SaveChangesAsync();
         Task InvalidateUserRefreshTokenAsync(User user);
     }

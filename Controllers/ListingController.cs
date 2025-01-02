@@ -79,6 +79,75 @@ namespace Rems_Auth.Controllers
             return Ok(updatedListing);
         }
 
+        [HttpPatch("{id}/ChangeStatus")]
+        public async Task<IActionResult> ChangeListingStatus(Guid id)
+        {
+            try
+            {
+                // Call the service to toggle the status
+                var updatedListing = await _listingService.ChangeListingStatusAsync(id);
+                if (updatedListing == null)
+                {
+                    return NotFound("Listing not found.");
+                }
+                return Ok(updatedListing);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id}/reviews")]
+        public async Task<IActionResult> GetReviewsByListingId(Guid id)
+        {
+            try
+            {
+                var reviews = await _listingService.GetReviewsByListingIdAsync(id);
+                if (reviews == null || !reviews.Any())
+                {
+                    return NotFound("No reviews found for this listing.");
+                }
+                return Ok(reviews);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/reviews")]
+        public async Task<IActionResult> AddReview(Guid id, [FromBody] ReviewRequest request)
+        {
+            try
+            {
+                var review = await _listingService.AddReviewAsync(id, request);
+                return CreatedAtAction(nameof(GetListingById), new { id = review.ListingId }, review);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}/reviews/{reviewId}")]
+        public async Task<IActionResult> DeleteReview(Guid id, Guid reviewId)
+        {
+            try
+            {
+                var deleted = await _listingService.DeleteReviewAsync(id, reviewId);
+                if (!deleted)
+                {
+                    return NotFound("Review not found.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteListing(Guid id)
         {

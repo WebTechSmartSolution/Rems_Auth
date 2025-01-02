@@ -16,107 +16,62 @@ namespace Rems_Auth.Repositories
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
-            try
-            {
-                return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the user by email", ex);
-            }
+            return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         }
+
         public async Task<User> GetUserByIdAsync(Guid userId)
         {
-            try
-            {
-                return await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the user by ID", ex);
-            }
+            return await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
         }
 
-        public async Task<User> GetUserByResetTokenAsync(string hashedResetToken)
+        public async Task<User> GetUserByResetTokenAsync(string resetToken)
         {
-            try
-            {
-                return await _context.Users.SingleOrDefaultAsync(u => u.ResetToken == hashedResetToken);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the user by reset token", ex);
-            }
+            return await _context.Users.SingleOrDefaultAsync(u => u.ResetToken == resetToken);
         }
+
         public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
         {
-            try
-            {
-                return await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the refresh token", ex);
-            }
-        }
-       
-        public async Task InvalidateUserRefreshTokenAsync(User user)
-        {
-            user.RefreshToken = null;
-            user.RefreshTokenExpires = DateTime.MinValue;
-            await _context.SaveChangesAsync();
+            return await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            try
-            {
-                return await _context.Users.FindAsync(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the user by ID", ex);
-            }
+            return await _context.Users.AsNoTracking().ToListAsync();
         }
 
         public async Task AddUserAsync(User user)
         {
-            try
-            {
-                user.CreatedAt = DateTime.UtcNow;
-                await _context.Users.AddAsync(user);
-                await _context.Users.AddAsync(user);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while adding the user", ex);
-            }
+            user.CreatedAt = DateTime.UtcNow;
+            await _context.Users.AddAsync(user);
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            try
+            user.UpdatedAt = DateTime.UtcNow;
+            _context.Users.Update(user);
+        }
+
+        public async Task UpdateUserProfilePictureAsync(Guid userId, string profilePictureUrl)
+        {
+            var user = await GetUserByIdAsync(userId);
+            if (user != null)
             {
+                user.ProfilePictureUrl = profilePictureUrl;
                 user.UpdatedAt = DateTime.UtcNow;
-                _context.Users.Update(user);
-                _context.Users.Update(user);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while updating the user", ex);
+                await SaveChangesAsync();
             }
         }
 
         public async Task SaveChangesAsync()
         {
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while saving changes to the database", ex);
-            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task InvalidateUserRefreshTokenAsync(User user)
+        {
+            user.RefreshToken = null;
+            user.RefreshTokenExpires = DateTime.MinValue;
+            await SaveChangesAsync();
         }
     }
 }

@@ -48,6 +48,33 @@ namespace Rems_Auth.Repositories
             return listing;
         }
 
+        public async Task<Review> AddReviewAsync(Review review)
+        {
+            await _context.Reviews.AddAsync(review);
+            await _context.SaveChangesAsync();
+            return review;
+        }
+
+        public async Task<bool> DeleteReviewAsync(Guid listingId, Guid reviewId)
+        {
+            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId && r.ListingId == listingId);
+            if (review == null)
+            {
+                return false;
+            }
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<IEnumerable<Review>> GetReviewsByListingIdAsync(Guid listingId)
+        {
+            return await _context.Reviews
+                .Where(r => r.ListingId == listingId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<bool> DeleteListingAsync(Guid id)
         {
             var listing = await _context.Listings.FindAsync(id);

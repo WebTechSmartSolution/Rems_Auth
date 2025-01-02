@@ -30,6 +30,7 @@ namespace Rems_Auth.Models
         public ICollection<AddListing> Listings { get; set; } = new List<AddListing>();
         public virtual ICollection<Message> SentMessages { get; set; } // Messages sent by the user
         public virtual ICollection<Message> ReceivedMessages { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
     }
 }

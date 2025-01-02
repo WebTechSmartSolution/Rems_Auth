@@ -330,6 +330,93 @@ namespace Rems_Auth.Services
 
             };
         }
+        public async Task<ListingResponse> ChangeListingStatusAsync(Guid id)
+        {
+            // Fetch the listing by ID
+            var listing = await _listingRepository.GetListingByIdAsync(id);
+            if (listing == null)
+            {
+                return null;
+            }
+
+            // Toggle the status
+            listing.status = listing.status == "available" ? "sold" : "available";
+
+            // Save the changes
+            var updatedListing = await _listingRepository.UpdateListingAsync(listing);
+
+            // Map the updated listing to the response DTO
+            return new ListingResponse
+            {
+                Id = updatedListing.Id,
+                OwnerId = updatedListing.UserId,
+                PropertyName = updatedListing.PropertyName,
+                PropertyType = updatedListing.PropertyType,
+                CurrencyType = updatedListing.CurrencyType,
+                SalePrice = updatedListing.SalePrice,
+                OfferPrice = updatedListing.OfferPrice,
+                status = updatedListing.status,
+                PropertyId = updatedListing.PropertyId,
+                PricePerSqft = updatedListing.PricePerSqft,
+                NoOfBedrooms = updatedListing.NoOfBedrooms,
+                NoOfBathrooms = updatedListing.NoOfBathrooms,
+                Sqft = updatedListing.Sqft,
+                NoOfFloors = updatedListing.NoOfFloors,
+                GarageSize = updatedListing.GarageSize,
+                YearConstructed = updatedListing.YearConstructed,
+                Description = updatedListing.Description,
+                Email = updatedListing.Email,
+                Phone = updatedListing.Phone,
+                Address = updatedListing.Address,
+                City = updatedListing.City,
+                State = updatedListing.State,
+                ZipCode = updatedListing.ZipCode,
+                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList(),
+                CreatedAt = updatedListing.CreatedAt,
+                UpdatedAt = updatedListing.UpdatedAt
+            };
+        }
+        public async Task<ReviewResponse> AddReviewAsync(Guid listingId, ReviewRequest request)
+        {
+            var review = new Review
+            {
+                ListingId = listingId,
+                UserId = request.UserId,
+                Content = request.Content,
+                Rating = request.Rating,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var createdReview = await _listingRepository.AddReviewAsync(review);
+            return new ReviewResponse
+            {
+                Id = createdReview.Id,
+                ListingId = createdReview.ListingId,
+                UserId = createdReview.UserId,
+                Content = createdReview.Content,
+                Rating = createdReview.Rating,
+                CreatedAt = createdReview.CreatedAt
+            };
+        }
+
+        public async Task<IEnumerable<ReviewResponse>> GetReviewsByListingIdAsync(Guid listingId)
+        {
+            var reviews = await _listingRepository.GetReviewsByListingIdAsync(listingId);
+            return reviews.Select(r => new ReviewResponse
+            {
+                Id = r.Id,
+                ListingId = r.ListingId,
+                UserId = r.UserId,
+                Content = r.Content,
+                Rating = r.Rating,
+                CreatedAt = r.CreatedAt
+            });
+        }
+
+        public async Task<bool> DeleteReviewAsync(Guid listingId, Guid reviewId)
+        {
+            return await _listingRepository.DeleteReviewAsync(listingId, reviewId);
+        }
 
         public async Task<bool> DeleteListingAsync(Guid id)
         {

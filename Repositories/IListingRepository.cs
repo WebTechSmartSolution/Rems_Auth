@@ -11,6 +11,10 @@ namespace Rems_Auth.Repositories
         Task<AddListing> GetListingByIdAsync(Guid id);
         Task<List<AddListing>> GetListingsByUserIdAsync(Guid userId);  // Get listings by user ID
         Task<AddListing> UpdateListingAsync(AddListing listing);
+        Task<IEnumerable<Review>> GetReviewsByListingIdAsync(Guid listingId);
+        Task<Review> AddReviewAsync(Review review);
+        Task<bool> DeleteReviewAsync(Guid listingId, Guid reviewId);
+
         Task<bool> DeleteListingAsync(Guid id);
     }
 }

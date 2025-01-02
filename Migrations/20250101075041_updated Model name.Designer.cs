@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rems_Auth.Data;
 
@@ -11,9 +12,11 @@ using Rems_Auth.Data;
 namespace Rems_Auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250101075041_updated Model name")]
+    partial class updatedModelname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,8 +174,8 @@ namespace Rems_Auth.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("31d86b7c-5f3e-48e0-b656-24c4dbfcc9b6"),
-                            CreatedAt = new DateTime(2025, 1, 1, 13, 14, 49, 13, DateTimeKind.Utc).AddTicks(5169),
+                            Id = new Guid("949adb30-fd93-402a-9955-135e0c93ba02"),
+                            CreatedAt = new DateTime(2025, 1, 1, 7, 50, 41, 398, DateTimeKind.Utc).AddTicks(1148),
                             PasswordHash = "6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=",
                             Username = "admin"
                         });
@@ -232,33 +235,6 @@ namespace Rems_Auth.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("Rems_Auth.Models.Review", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Rems_Auth.Models.User", b =>
