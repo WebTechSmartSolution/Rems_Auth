@@ -317,8 +317,6 @@ namespace Rems_Auth.Services
                 Description = updatedListing.Description,
                 Email = updatedListing.Email,
                 Phone = updatedListing.Phone,
-
-                // Location
                 Address = updatedListing.Address,
                 City = updatedListing.City,
                 State = updatedListing.State,
