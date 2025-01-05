@@ -262,71 +262,78 @@ namespace Rems_Auth.Services
 
         public async Task<ListingResponse> UpdateListingAsync(Guid id, UpdateListingRequest request)
         {
-            var listing = new AddListing
+            try
             {
-                Id = id,
+                // Fetch the existing listing from the repository
+                var listing = await _listingRepository.GetListingByIdAsync(id);
+                if (listing == null)
+                    throw new Exception("Listing not found.");
 
-                // Property Info
-                 PropertyName = request.PropertyName,
-                 PropertyType = request.PropertyType,
-                 CurrencyType = request.CurrencyType,
-                 SalePrice = request.SalePrice,
-                 OfferPrice = request.OfferPrice,
-                status = request.status,
-                // Property Details
-                PropertyId = request.PropertyId,
-                 PricePerSqft = request.PricePerSqft,
-                 NoOfBedrooms = request.NoOfBedrooms,
-                 NoOfBathrooms = request.NoOfBathrooms,
-                 Sqft = request.Sqft,
-                 NoOfFloors = request.NoOfFloors,
-                 GarageSize = request.GarageSize,
-                 YearConstructed = request.YearConstructed,
-                Description = request.Description,
-                Email = request.Email,
-                 Phone = request.Phone,
+                // Update the listing properties
+                listing.PropertyName = request.PropertyName;
+                listing.PropertyType = request.PropertyType;
+                listing.CurrencyType = request.CurrencyType;
+                listing.SalePrice = request.SalePrice;
+                listing.OfferPrice = request.OfferPrice;
+                listing.status = request.status;
+                listing.PropertyId = request.PropertyId;
+                listing.PricePerSqft = request.PricePerSqft;
+                listing.NoOfBedrooms = request.NoOfBedrooms;
+                listing.NoOfBathrooms = request.NoOfBathrooms;
+                listing.Sqft = request.Sqft;
+                listing.NoOfFloors = request.NoOfFloors;
+                listing.GarageSize = request.GarageSize;
+                listing.YearConstructed = request.YearConstructed;
+                listing.Description = request.Description;
+                listing.Email = request.Email;
+                listing.Phone = request.Phone;
+                listing.Address = request.Address;
+                listing.City = request.City;
+                listing.State = request.State;
+                listing.ZipCode = request.ZipCode;
+                listing.UpdatedAt = DateTime.UtcNow;
 
-                 // Location
-                 Address = request.Address,
-                 City = request.City,
-                 State = request.State,
-                 ZipCode = request.ZipCode
-            };
+                // Save the changes to the database
+                await _listingRepository.UpdateListingAsync(listing);
 
-            var updatedListing = await _listingRepository.UpdateListingAsync(listing);
-            return new ListingResponse
+                // Return the updated listing as a response
+                return new ListingResponse
+                {
+                    Id = listing.Id,
+                    PropertyName = listing.PropertyName,
+                    PropertyType = listing.PropertyType,
+                    CurrencyType = listing.CurrencyType,
+                    SalePrice = listing.SalePrice,
+                    OfferPrice = listing.OfferPrice,
+                    status = listing.status,
+                    PropertyId = listing.PropertyId,
+                    PricePerSqft = listing.PricePerSqft,
+                    NoOfBedrooms = listing.NoOfBedrooms,
+                    NoOfBathrooms = listing.NoOfBathrooms,
+                    Sqft = listing.Sqft,
+                    NoOfFloors = listing.NoOfFloors,
+                    GarageSize = listing.GarageSize,
+                    YearConstructed = listing.YearConstructed,
+                    Description = listing.Description,
+                    Email = listing.Email,
+                    Phone = listing.Phone,
+                    Address = listing.Address,
+                    City = listing.City,
+                    State = listing.State,
+                    ZipCode = listing.ZipCode,
+                    CreatedAt = listing.CreatedAt,
+                    UpdatedAt = listing.UpdatedAt,
+                    Images = listing.Images?.Select(i => new ImageResponse
+                    {
+                        Path = i.Path
+                    }).ToList()
+                };
+            }
+            catch (Exception ex)
             {
-                Id = updatedListing.Id,
-
-                // Property Info
-                PropertyName = updatedListing.PropertyName,
-                PropertyType = updatedListing.PropertyType,
-                CurrencyType = updatedListing.CurrencyType,
-                SalePrice = updatedListing.SalePrice,
-                OfferPrice = updatedListing.OfferPrice,
-                status = updatedListing.status,
-                // Property Details
-                PropertyId = updatedListing.PropertyId,
-                PricePerSqft = updatedListing.PricePerSqft,
-                NoOfBedrooms = updatedListing.NoOfBedrooms,
-                NoOfBathrooms = updatedListing.NoOfBathrooms,
-                Sqft = updatedListing.Sqft,
-                NoOfFloors = updatedListing.NoOfFloors,
-                GarageSize = updatedListing.GarageSize,
-                YearConstructed = updatedListing.YearConstructed,
-                Description = updatedListing.Description,
-                Email = updatedListing.Email,
-                Phone = updatedListing.Phone,
-                Address = updatedListing.Address,
-                City = updatedListing.City,
-                State = updatedListing.State,
-                ZipCode = updatedListing.ZipCode,
-                CreatedAt = updatedListing.CreatedAt,
-                UpdatedAt = updatedListing.UpdatedAt,
-                Images = updatedListing.Images.Select(i => new ImageResponse { Path = i.Path }).ToList()
-
-
-            };
+                Console.WriteLine($"Error updating listing: {ex.Message}");
+                throw new Exception("An error occurred while updating the listing. Please try again.");
+            }
         }
         public async Task<ListingResponse> ChangeListingStatusAsync(Guid id)
         {
@@ -382,6 +389,8 @@ namespace Rems_Auth.Services
                 UserId = request.UserId,
                 Content = request.Content,
                 Rating = request.Rating,
+                Email= request.Email,
+                name = request.name,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -393,6 +402,8 @@ namespace Rems_Auth.Services
                 UserId = createdReview.UserId,
                 Content = createdReview.Content,
                 Rating = createdReview.Rating,
+                Email = createdReview.Email,
+                name = createdReview.name,
                 CreatedAt = createdReview.CreatedAt
             };
         }
@@ -407,6 +418,8 @@ namespace Rems_Auth.Services
                 UserId = r.UserId,
                 Content = r.Content,
                 Rating = r.Rating,
+                Email = r.Email,
+                name = r.name,
                 CreatedAt = r.CreatedAt
             });
         }
