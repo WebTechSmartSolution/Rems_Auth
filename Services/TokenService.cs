@@ -20,8 +20,6 @@ namespace Rems_Auth.Services
         public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Decode the base64-encoded secret key
             var key = Convert.FromBase64String(_jwtSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -47,8 +45,6 @@ namespace Rems_Auth.Services
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Decode the base64-encoded secret key
             var key = Convert.FromBase64String(_jwtSettings.Secret);
 
             try
@@ -65,7 +61,6 @@ namespace Rems_Auth.Services
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-
                 var userEmail = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
                 var userId = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value;
 
@@ -76,26 +71,24 @@ namespace Rems_Auth.Services
             }
             catch (Exception ex)
             {
-                // Optional: Log the exception for debugging
                 Console.WriteLine($"Token validation failed: {ex.Message}");
                 return null;
             }
         }
+
         public string GenerateTokenForAdmin(Admin admin)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Decode the base64-encoded secret key
             var key = Convert.FromBase64String(_jwtSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim(ClaimTypes.Name, admin.Username),
-            new Claim("adminid", admin.Id.ToString()),
-            new Claim(ClaimTypes.Role, "Admin")
-        }),
+                    new Claim(ClaimTypes.Name, admin.Username),
+                    new Claim("adminid", admin.Id.ToString()),
+                    new Claim(ClaimTypes.Role, "admin")
+                }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
@@ -106,5 +99,80 @@ namespace Rems_Auth.Services
             return tokenHandler.WriteToken(token);
         }
 
+        // Implement ValidateUserToken
+        public (string userEmail, Guid userId)? ValidateUserToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Convert.FromBase64String(_jwtSettings.Secret);
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettings.Audience,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var userEmail = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+                var userId = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value;
+
+                if (Guid.TryParse(userId, out var parsedUserId))
+                    return (userEmail, parsedUserId);
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"User token validation failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Implement ValidateAdminToken
+        public (string adminUsername, Guid adminId)? ValidateAdminToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Convert.FromBase64String(_jwtSettings.Secret);
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettings.Audience,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var adminUsername = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+                var adminId = jwtToken.Claims.FirstOrDefault(x => x.Type == "adminid")?.Value;
+
+                if (Guid.TryParse(adminId, out var parsedAdminId))
+                    return (adminUsername, parsedAdminId);
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Admin token validation failed: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

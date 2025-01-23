@@ -23,10 +23,11 @@ namespace Rems_Auth.Data
         {
             base.OnModelCreating(builder);
             SeedAdmin(builder);
-            // Configure the relationship between Listing and User
-            builder.Entity<AddListing>()
-                .HasOne(l => l.User)
-                .WithMany()  // A user can have many listings
+            
+            // Configure the relationship between User and AddListing
+            builder.Entity<User>()
+                .HasMany(u => u.Listings) // A user can have many listings
+                .WithOne(l => l.User)     // Each listing belongs to one user
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 

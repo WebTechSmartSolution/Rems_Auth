@@ -8,6 +8,7 @@ using Rems_Auth.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Rems_Auth.Utilities;
 using Microsoft.AspNet.Identity;
+using System.Linq;
 
 namespace Rems_Auth.Services
 {
@@ -15,12 +16,14 @@ namespace Rems_Auth.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IListingRepository _listingRepository;
 
 
-        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher)
+        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher,IListingRepository listingRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
+            _listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));
         }
 
 
@@ -41,12 +44,30 @@ namespace Rems_Auth.Services
                 CountryCode = user.CountryCode,
                 ProfileImageUrl = user.ProfilePictureUrl,
                 IsAgent = user.IsAgent,
+                TotalListings = user.Listings.Count,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             });
         }
 
+        //public async Task DeleteUserAndListingsAsync(Guid userId)
+        //{
+        //    var user = await _userRepository.GetUserByIdAsync(userId);
+        //    if (user == null)
+        //    {
+        //        throw new Exception("User not found");
+        //    }
 
+        //    // Fetch and delete related listings
+        //    var listings = await _listingRepository.GetListingsByUserIdAsync(userId);
+        //    foreach (var listing in listings)
+        //    {
+        //        await _listingRepository.DeleteListingAsync(listing);
+        //    }
+
+        //    // Delete the user
+        //    await _userRepository.DeleteUserAsync(user);
+        //}
         public async Task<User> UpdateUserAsync(Guid userId, UserUpdateRequest request)
         {
             if (request == null)
@@ -138,5 +159,12 @@ namespace Rems_Auth.Services
             string hashedInput = HashPassword(password);
             return hashedInput == storedHash;
         }
+        public async Task<int> GetTotalUsersAsync()
+        {
+            // Assuming _userRepository is injected and provides access to the user database table
+            var users = await _userRepository.GetAllUsersAsync();
+            return users.Count();
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Rems_Auth.Dtos;
+using Rems_Auth.Repositories;
 using Rems_Auth.Services;
 using System.Security.Claims;
 
@@ -10,10 +11,14 @@ namespace Rems_Auth.Controllers
     public class ListingsController : ControllerBase
     {
         private readonly IListingService _listingService;
+        private readonly IUserService _userService;
+        private readonly IListingRepository _listingRepository;
 
-        public ListingsController(IListingService listingService)
+        public ListingsController(IListingService listingService, IUserService userService , IListingRepository listingRepository)
         {
+            _userService = userService;
             _listingService = listingService;
+            _listingRepository = listingRepository;
         }
 
        
@@ -97,6 +102,24 @@ namespace Rems_Auth.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+        [HttpGet("reviews")]
+        public async Task<IActionResult> GetAllReviews()
+        {
+            try
+            {
+                var reviews = await _listingRepository.GetAllReviewsAsync();
+                if (reviews == null || !reviews.Any())
+                {
+                    return NotFound("No reviews found.");
+                }
+                return Ok(reviews);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
 
         [HttpGet("{id}/reviews")]
         public async Task<IActionResult> GetReviewsByListingId(Guid id)
@@ -158,6 +181,48 @@ namespace Rems_Auth.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("dashboard-stats")]
+        public async Task<ActionResult<DashboardStatsResponse>> GetDashboardStats()
+        {
+            try
+            {
+                // Get total listings (You can customize this based on your requirements)
+                var totalListings = await _listingService.GetAllListingsAsync();
+                var totalListingsCount = totalListings.Count;
+
+                // Get total users (You might need to implement a GetTotalUsersAsync method in your service)
+                var totalUsers = await _userService.GetTotalUsersAsync(); // Add this method in your IListingService if not present
+
+                // Get total sold listings
+                var totalSoldListings = totalListings.Count(listing =>
+     !string.IsNullOrWhiteSpace(listing.status) &&
+     listing.status.Trim().Equals("Not available", StringComparison.OrdinalIgnoreCase));
+
+                var totalRevenue = totalListings
+                    .Where(listing => !string.IsNullOrWhiteSpace(listing.status) &&
+                                      listing.status.Trim().Equals("Not available", StringComparison.OrdinalIgnoreCase))
+                    .Sum(listing => listing.SalePrice);
+                // Use the appropriate price field
+                Console.WriteLine(totalRevenue);
+
+                // Constructing the response
+                var dashboardStats = new DashboardStatsResponse
+                {
+                    TotalListings = totalListingsCount,
+                    TotalUsers = totalUsers,
+                    TotalSoldListings = totalSoldListings,
+                    TotalRevenue = totalRevenue
+                };
+
+                return Ok(dashboardStats);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
     }
 
 }

@@ -9,6 +9,7 @@
         public string CountryCode { get; set; }
         public string? ProfileImageUrl { get; set; }
         public bool? IsAgent { get; set; }
+        public int TotalListings { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

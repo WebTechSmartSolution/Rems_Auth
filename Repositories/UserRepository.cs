@@ -36,7 +36,10 @@ namespace Rems_Auth.Repositories
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _context.Users.AsNoTracking().ToListAsync();
+            return await _context.Users
+        .Include(user => user.Listings) // Include the Listings relationship
+        .AsNoTracking()
+        .ToListAsync();
         }
 
         public async Task AddUserAsync(User user)
@@ -44,7 +47,11 @@ namespace Rems_Auth.Repositories
             user.CreatedAt = DateTime.UtcNow;
             await _context.Users.AddAsync(user);
         }
-
+        public async Task DeleteUserAsync(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
         public async Task UpdateUserAsync(User user)
         {
             user.UpdatedAt = DateTime.UtcNow;
@@ -73,5 +80,6 @@ namespace Rems_Auth.Repositories
             user.RefreshTokenExpires = DateTime.MinValue;
             await SaveChangesAsync();
         }
+
     }
 }

@@ -7,10 +7,11 @@ namespace Rems_Auth.Services
     {
         Task<User> GetUserByIdAsync(Guid userId);
         Task<IEnumerable<UserResponse>> GetAllUsersAsync();
-
+        Task<int> GetTotalUsersAsync();
         // IUserService.cs
         Task<User> UpdateUserAsync(Guid userId, UserUpdateRequest request);
 
         Task UpdateUserProfilePictureAsync(Guid userId, IFormFile profilePicture);
+        //Task DeleteUserAndListingsAsync(Guid userId);
     }
 }

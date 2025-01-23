@@ -47,6 +47,10 @@ namespace Rems_Auth.Repositories
             await _context.SaveChangesAsync();
             return listing;
         }
+        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+        {
+            return await _context.Reviews.ToListAsync();
+        }
 
         public async Task<Review> AddReviewAsync(Review review)
         {
@@ -85,6 +89,11 @@ namespace Rems_Auth.Repositories
                 return true;
             }
             return false;
+        }
+        public async Task DeleteListingAsync(AddListing listing)
+        {
+            _context.Listings.Remove(listing);
+            await _context.SaveChangesAsync();
         }
     }
 }

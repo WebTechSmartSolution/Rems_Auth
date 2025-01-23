@@ -11,11 +11,14 @@ namespace Rems_Auth.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IListingService _listingService; // Inject listing service
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IListingService listingService)
         {
             _userService = userService;
+            _listingService = listingService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -46,7 +49,6 @@ namespace Rems_Auth.Controllers
             return Ok(userResponse);
         }
 
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromForm] UserUpdateRequest request)
         {
@@ -75,7 +77,6 @@ namespace Rems_Auth.Controllers
             }
         }
 
-
         [HttpPut("{id}/profile-picture")]
         public async Task<IActionResult> UpdateProfilePicture(Guid id, [FromForm] IFormFile profilePicture)
         {
@@ -89,5 +90,20 @@ namespace Rems_Auth.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteUser(Guid id)
+        //{
+        //    try
+        //    {
+        //        await _userService.DeleteUserAndListingsAsync(id);
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
+
     }
 }

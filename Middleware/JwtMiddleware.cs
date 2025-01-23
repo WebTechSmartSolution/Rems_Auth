@@ -24,22 +24,28 @@ namespace Rems_Auth.Middleware
 
                 if (token != null)
                 {
-                    var tokenData = tokenService.ValidateToken(token);
+                    // Check if the token is for an admin or user
+                    var tokenData = ValidateTokenBasedOnRole(tokenService, token);
 
-                    if (tokenData.HasValue)
+                    if (tokenData != null)
                     {
-                        var userId = tokenData.Value.userId;
-
-                        var user = await userRepository.GetUserByIdAsync(userId);
-
-                        if (user == null)
+                        // Set the user or admin to context
+                        if (tokenData is (string userEmail, Guid userId))
                         {
-                            context.Response.StatusCode = StatusCodes.Status404NotFound;
-                            await context.Response.WriteAsync("User not found.");
-                            return;
+                            var user = await userRepository.GetUserByIdAsync(userId);
+                            if (user == null)
+                            {
+                                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                                await context.Response.WriteAsync("User not found.");
+                                return;
+                            }
+                            context.Items["User"] = user;
                         }
-
-                        context.Items["User"] = user;
+                        else if (tokenData is (string adminUsername, Guid adminId))
+                        {
+                            // Add admin handling logic if needed (e.g., setting admin in context)
+                            context.Items["Admin"] = new { adminUsername, adminId };
+                        }
                     }
                     else
                     {
@@ -63,5 +69,19 @@ namespace Rems_Auth.Middleware
             }
         }
 
+        private object ValidateTokenBasedOnRole(ITokenService tokenService, string token)
+        {
+            // Try to validate as a user token first
+            var userData = tokenService.ValidateUserToken(token);
+            if (userData.HasValue)
+                return userData.Value;
+
+            // If user validation fails, try admin token validation
+            var adminData = tokenService.ValidateAdminToken(token);
+            if (adminData.HasValue)
+                return adminData.Value;
+
+            return null;
+        }
     }
 }

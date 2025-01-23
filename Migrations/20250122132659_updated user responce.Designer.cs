@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rems_Auth.Data;
 
@@ -11,9 +12,11 @@ using Rems_Auth.Data;
 namespace Rems_Auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250122132659_updated user responce")]
+    partial class updateduserresponce
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,8 +169,8 @@ namespace Rems_Auth.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6048effb-a8db-417c-9e4a-9b0845651485"),
-                            CreatedAt = new DateTime(2025, 1, 23, 13, 50, 13, 806, DateTimeKind.Utc).AddTicks(6364),
+                            Id = new Guid("3d98c9fc-02b4-449f-b16b-a57256b72daa"),
+                            CreatedAt = new DateTime(2025, 1, 22, 13, 26, 58, 985, DateTimeKind.Utc).AddTicks(9654),
                             PasswordHash = "6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=",
                             Username = "admin"
                         });

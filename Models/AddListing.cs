@@ -17,7 +17,7 @@ namespace Rems_Auth.Models
         public string status { get; set; }
         public string Description { get; set; }
         public decimal SalePrice { get; set; }
-        public decimal OfferPrice { get; set; }
+        public decimal OfferPrice { get; set; } = 0;
 
         // Property Details
         public required string PropertyId { get; set; }

@@ -11,7 +11,8 @@ namespace Rems_Auth.Repositories
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task<IEnumerable<User>> GetAllUsersAsync();
-
+        //Task<User> GetUserByIdAsync(Guid userId);
+        Task DeleteUserAsync(User user);
         Task UpdateUserProfilePictureAsync(Guid userId, string profilePictureUrl);
         Task SaveChangesAsync();
         Task InvalidateUserRefreshTokenAsync(User user);

@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using Rems_Auth.Dtos;
 using Rems_Auth.Models;
 using Rems_Auth.Repositories;
@@ -335,6 +336,7 @@ namespace Rems_Auth.Services
                 throw new Exception("An error occurred while updating the listing. Please try again.");
             }
         }
+       
         public async Task<ListingResponse> ChangeListingStatusAsync(Guid id)
         {
             // Fetch the listing by ID
@@ -345,7 +347,7 @@ namespace Rems_Auth.Services
             }
 
             // Toggle the status
-            listing.status = listing.status == "available" ? "sold" : "available";
+            listing.status = listing.status == "available" ? "Not available" : "available";
 
             // Save the changes
             var updatedListing = await _listingRepository.UpdateListingAsync(listing);
@@ -433,6 +435,7 @@ namespace Rems_Auth.Services
         {
             return await _listingRepository.DeleteListingAsync(id);
         }
+
     }
 
 }
