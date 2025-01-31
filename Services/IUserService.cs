@@ -12,6 +12,6 @@ namespace Rems_Auth.Services
         Task<User> UpdateUserAsync(Guid userId, UserUpdateRequest request);
 
         Task UpdateUserProfilePictureAsync(Guid userId, IFormFile profilePicture);
-        //Task DeleteUserAndListingsAsync(Guid userId);
+        Task<bool> DeleteUserAsync(Guid userId);
     }
 }

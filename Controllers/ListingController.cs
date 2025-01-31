@@ -73,7 +73,7 @@ namespace Rems_Auth.Controllers
             return Ok(listings);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> UpdateListing(Guid id, [FromBody] UpdateListingRequest request)
         {
             var updatedListing = await _listingService.UpdateListingAsync(id, request);
@@ -171,16 +171,17 @@ namespace Rems_Auth.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteListing(Guid id)
         {
             var success = await _listingService.DeleteListingAsync(id);
             if (!success)
             {
-                return NotFound();
+                return NotFound("Listing not found.");
             }
-            return NoContent();
+            return Ok("Listing Deleted Sucessfully");
         }
+
 
         [HttpGet("dashboard-stats")]
         public async Task<ActionResult<DashboardStatsResponse>> GetDashboardStats()

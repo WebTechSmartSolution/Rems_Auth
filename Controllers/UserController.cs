@@ -49,7 +49,7 @@ namespace Rems_Auth.Controllers
             return Ok(userResponse);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromForm] UserUpdateRequest request)
         {
             try
@@ -77,33 +77,32 @@ namespace Rems_Auth.Controllers
             }
         }
 
-        [HttpPut("{id}/profile-picture")]
-        public async Task<IActionResult> UpdateProfilePicture(Guid id, [FromForm] IFormFile profilePicture)
-        {
-            try
-            {
-                await _userService.UpdateUserProfilePictureAsync(id, profilePicture);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUser(Guid id)
+        //[HttpPut("{id}/profile-picture")]
+        //public async Task<IActionResult> UpdateProfilePicture(Guid id, [FromForm] IFormFile profilePicture)
         //{
         //    try
         //    {
-        //        await _userService.DeleteUserAndListingsAsync(id);
+        //        await _userService.UpdateUserProfilePictureAsync(id, profilePicture);
         //        return NoContent();
         //    }
         //    catch (Exception ex)
         //    {
-        //        return BadRequest(new { message = ex.Message });
+        //        return BadRequest(ex.Message);
         //    }
         //}
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var success = await _userService.DeleteUserAsync(id);
+            if (!success)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+            return Ok(new { message = "User deleted successfully." });
+        }
+
+
 
     }
 }

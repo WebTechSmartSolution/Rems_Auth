@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Rems_Auth.Utilities;
 using Microsoft.AspNet.Identity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Rems_Auth.Data;
 
 namespace Rems_Auth.Services
 {
@@ -17,13 +19,15 @@ namespace Rems_Auth.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IListingRepository _listingRepository;
+        private readonly ApplicationDbContext _context;
 
 
-        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher,IListingRepository listingRepository)
+        public UserService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher,IListingRepository listingRepository, ApplicationDbContext context)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));
+            _context = context ?? throw new ArgumentNullException(nameof(_context));
         }
 
 
@@ -164,6 +168,62 @@ namespace Rems_Auth.Services
             // Assuming _userRepository is injected and provides access to the user database table
             var users = await _userRepository.GetAllUsersAsync();
             return users.Count();
+        }
+        public async Task<bool> DeleteUserAsync(Guid userId)
+        {
+            try
+            {
+                // Load the user with all associated data, including images
+                var user = await _context.Users
+                    .Include(u => u.Listings)
+                        .ThenInclude(l => l.Images)  // Ensure images are included
+                    .Include(u => u.Listings)
+                        .ThenInclude(l => l.Chats)
+                        .ThenInclude(c => c.Messages)
+                    .Include(u => u.SentMessages)
+                    .Include(u => u.ReceivedMessages)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user != null)
+                {
+                    // Delete listings and their associated data
+                    foreach (var listing in user.Listings)
+                    {
+                        foreach (var chat in listing.Chats)
+                        {
+                            _context.Messages.RemoveRange(chat.Messages);  // Remove all messages in the chat
+                            _context.Chats.Remove(chat);  // Remove the chat itself
+                        }
+
+                        // Check if Images is null or empty before removing
+                        if (listing.Images != null && listing.Images.Any())
+                        {
+                            _context.Images.RemoveRange(listing.Images);  // Remove all images associated with the listing
+                        }
+
+                        _context.Listings.Remove(listing);  // Remove the listing itself
+                    }
+
+                    // Delete all messages associated with the user
+                    _context.Messages.RemoveRange(user.SentMessages);
+                    _context.Messages.RemoveRange(user.ReceivedMessages);
+
+                    // Remove the user
+                    _context.Users.Remove(user);
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;  // User not found
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can replace this with your logger)
+                Console.WriteLine($"Error deleting user: {ex.Message}");
+                return false;  // Return false if an error occurs
+            }
         }
 
     }

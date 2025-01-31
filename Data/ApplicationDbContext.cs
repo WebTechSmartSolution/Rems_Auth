@@ -55,6 +55,20 @@ namespace Rems_Auth.Data
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Chat>()
+           .HasMany(c => c.Messages)
+           .WithOne(m => m.Chat)
+           .HasForeignKey(m => m.ChatId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure Listings cascade delete their Chats
+            builder.Entity<AddListing>()
+           .HasMany(l => l.Chats)
+           .WithOne()
+           .HasForeignKey(c => c.ListingId)
+           .OnDelete(DeleteBehavior.Cascade);
+
         }
         public void SeedAdmin(ModelBuilder modelBuilder)
         {

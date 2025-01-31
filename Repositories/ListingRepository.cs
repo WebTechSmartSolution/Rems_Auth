@@ -81,15 +81,34 @@ namespace Rems_Auth.Repositories
 
         public async Task<bool> DeleteListingAsync(Guid id)
         {
-            var listing = await _context.Listings.FindAsync(id);
+            var listing = await _context.Listings
+                .Include(l => l.Images)
+                .Include(l => l.Chats) // Include related chats
+                .ThenInclude(c => c.Messages) // Include messages of those chats
+                .FirstOrDefaultAsync(l => l.Id == id);
+
             if (listing != null)
             {
+                // Remove associated messages and chats
+                foreach (var chat in listing.Chats)
+                {
+                    _context.Messages.RemoveRange(chat.Messages); // Remove chat messages
+                    _context.Chats.Remove(chat); // Remove chats
+                }
+
+                // Remove associated images
+                _context.Images.RemoveRange(listing.Images);
+
+                // Remove the listing
                 _context.Listings.Remove(listing);
+
                 await _context.SaveChangesAsync();
                 return true;
             }
+
             return false;
         }
+
         public async Task DeleteListingAsync(AddListing listing)
         {
             _context.Listings.Remove(listing);

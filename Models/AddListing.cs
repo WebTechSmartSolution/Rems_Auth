@@ -50,6 +50,8 @@ namespace Rems_Auth.Models
         
         public ICollection<Image> Images { get; set; }
         // Metadata
+        public ICollection<Chat> Chats { get; set; } = new List<Chat>();
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
