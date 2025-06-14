@@ -1,4 +1,5 @@
-﻿using Rems_Auth.Dtos;
+﻿using Microsoft.AspNetCore.Identity;
+using Rems_Auth.Dtos;
 using Rems_Auth.Models;
 using Rems_Auth.Repositories;
 using System.Security.Cryptography;
@@ -11,7 +12,7 @@ namespace Rems_Auth.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly ITokenService _tokenService;
-
+        private readonly PasswordHasher<Admin> _passwordHasher;
         public AdminService(IAdminRepository adminRepository, ITokenService tokenService)
         {
             _adminRepository = adminRepository;
@@ -41,6 +42,33 @@ namespace Rems_Auth.Services
             admin.PasswordHash = HashPassword(request.NewPassword);
             await _adminRepository.UpdateAdminAsync(admin);
             return true;
+        }
+
+        public async Task<AdminResponce> SignupAsync(AdminSignUpRequest request)
+        {
+            try
+            {
+                var existingUser = await _adminRepository.GetUserByUsernameAsync(request.Username);
+                if (existingUser != null)
+                {
+                    return new AdminResponce { Message = "Email is already registered." };
+                }
+
+                var user = new Admin
+                {
+                    Username = request.Username,
+                    PasswordHash =  request.Password
+                };
+
+                await _adminRepository.AddUserAsync(user);
+                await _adminRepository.SaveChangesAsync();
+
+                return new AdminResponce { Message = "Registration successful." };
+            }
+            catch (Exception ex)
+            {
+                return new AdminResponce { Message = $"An error occurred during signup: {ex.Message}" };
+            }
         }
 
         private string HashPassword(string password)

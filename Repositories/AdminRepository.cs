@@ -13,6 +13,20 @@ namespace Rems_Auth.Repositories
         {
             _context = context;
         }
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task AddUserAsync(Admin user)
+        {
+            user.CreatedAt = DateTime.UtcNow;
+            await _context.Admins.AddAsync(user);
+        }
+
+        public async Task<Admin> GetUserByUsernameAsync(string username)
+        {
+            return await _context.Admins.SingleOrDefaultAsync(u => u.Username == username);
+        }
 
         public async Task<Admin> GetAdminByUsernameAsync(string username)
         {

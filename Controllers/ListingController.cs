@@ -52,8 +52,21 @@ namespace Rems_Auth.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ListingResponse>>> GetAllListings()
         {
-            return Ok(await _listingService.GetAllListingsAsync());
+            try
+            {
+                var listings = await _listingService.GetAllListingsAsync();
+                return Ok(listings);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (Console, Serilog, or another logging framework)
+                Console.WriteLine($"Error fetching listings: {ex.Message}");
+
+                // Return a generic error message to avoid exposing sensitive details
+                return StatusCode(500, "An unexpected error occurred while retrieving listings.");
+            }
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ListingResponse>> GetListingById(Guid id)
