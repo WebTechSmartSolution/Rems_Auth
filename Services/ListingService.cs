@@ -336,23 +336,25 @@ namespace Rems_Auth.Services
                 throw new Exception("An error occurred while updating the listing. Please try again.");
             }
         }
-       
+
         public async Task<ListingResponse> ChangeListingStatusAsync(Guid id)
         {
-            // Fetch the listing by ID
             var listing = await _listingRepository.GetListingByIdAsync(id);
-            if (listing == null)
+            if (listing == null) return null;
+
+            var propertyType = listing.PropertyType?.ToLower();
+
+            if (propertyType == "rent")
             {
-                return null;
+                listing.status = listing.status == "available" ? "rented" : "available";
+            }
+            else if (propertyType == "buy")
+            {
+                listing.status = listing.status == "available" ? "not available" : "available";
             }
 
-            // Toggle the status
-            listing.status = listing.status == "available" ? "Not available" : "available";
-
-            // Save the changes
             var updatedListing = await _listingRepository.UpdateListingAsync(listing);
 
-            // Map the updated listing to the response DTO
             return new ListingResponse
             {
                 Id = updatedListing.Id,
@@ -383,6 +385,7 @@ namespace Rems_Auth.Services
                 UpdatedAt = updatedListing.UpdatedAt
             };
         }
+
         public async Task<ReviewResponse> AddReviewAsync(Guid listingId, ReviewRequest request)
         {
             var review = new Review
